@@ -3,6 +3,8 @@ import tkFileDialog
 import sys
 from subprocess import call
 import os
+import paramiko
+from scp import SCPClient
 
 LARGE_FONT= ("Verdana", 12)
 
@@ -80,6 +82,8 @@ class PageTwo(Frame):
         textbox = Entry(self, bd =1)
         textbox.pack()
 
+        button2 = Button(self, text="Send and Delete", command=lambda: send_something(textbox))
+        button2.pack()
         button = Button(self, text="Back to Main Menu", command=lambda: controller.show_frame(StartPage))
         button.pack()
 
@@ -115,7 +119,7 @@ class PageSix(Frame):
         button2.pack()
 
 def ping_it(self,event):
-    hostname = "13.12.16.10"
+    #hostname = "server(string)"
     response = os.system("ping -c 1 " + hostname)
 
     if response == 0:
@@ -125,10 +129,22 @@ def ping_it(self,event):
         event.config(text="Disconnected!")
         print hostname, 'is down!'
 
+def createSSHClient(server, port, user, password):
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    #client.set_missing_key_policy(paramiko.AutoAddPolicy())
+    client.connect(server, port, user, password)
+    return client
+
 def open_something(textbox):
     app.fileName = tkFileDialog.askopenfilename(title = "Select File to Send", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
     print app.fileName
+    #ssh = createSSHClient("server(string)", port(int), user(string), password(string))
+    scp = SCPClient(ssh.get_transport())
 
+def send_something(textbox):
+    app.fileName = tkFileDialog.askopenfilename(title = "Select file to send and delete", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
+    print app.fileName
 
 
 app = BaconBits()
