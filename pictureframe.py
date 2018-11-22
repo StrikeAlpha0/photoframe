@@ -8,12 +8,6 @@ from scp import SCPClient
 
 LARGE_FONT= ("Verdana", 12)
 
-
-#def upload_it():
-#    user_entry = self.textbox.get()
-#    call(["scp", user_entry, pi\@10.43.1.235:/home/pi/Downloads])
-
-
 class BaconBits(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs) 
@@ -26,7 +20,7 @@ class BaconBits(Tk):
 
         self.frames = {}
 
-        for F in (StartPage, PageOne, PageTwo, PageThree, PageSix):
+        for F in (StartPage, PageOne, PageTwo, PageThree, PageFour, PageFive, PageSix):
             global app
             frame = F(container, self)
             self.frames[F] = frame
@@ -107,6 +101,27 @@ class PageThree(Frame):
         button3 = Button(self, text="Remove", command=lambda: controller.show_frame(PageTwo))
         button3.pack()
 
+class PageFour(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        label = Label(self, text="Switch to HDMI", font=LARGE_FONT, fg="black")
+        label.pack()
+
+        button = Button(self, text="Yes", fg="red2")
+        button.pack(pady=10,padx=10)
+        button2 = Button(self, text="No", command=lambda: controller.show_frame(StartPage))
+        button2.pack()
+
+class PageFive(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        label = Label(self, text="Switch to LCD", font=LARGE_FONT, fg="black")
+        label.pack()
+
+        button = Button(self, text="Yes", fg="red2")
+        button.pack(pady=10,padx=10)
+        button2 = Button(self, text="No", command:lambda: controller.show_frame(StartPage))
+
 class PageSix(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -119,7 +134,7 @@ class PageSix(Frame):
         button2.pack()
 
 def ping_it(self,event):
-    #hostname = "server(string)"
+    #hostname = "ip address (string)"
     response = os.system("ping -c 1 " + hostname)
 
     if response == 0:
@@ -139,8 +154,10 @@ def createSSHClient(server, port, user, password):
 def open_something(textbox):
     app.fileName = tkFileDialog.askopenfilename(title = "Select File to Send", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
     print app.fileName
-    #ssh = createSSHClient("server(string)", port(int), user(string), password(string))
-    scp = SCPClient(ssh.get_transport())
+    #ssh = createSSHClient("ipaddress(string)", port(int), "username(string)", "password")
+    with SCPClient(ssh.get_transport()) as scp:
+        #scp.put(app.fileName, 'full ending location')
+     
 
 def send_something(textbox):
     app.fileName = tkFileDialog.askopenfilename(title = "Select file to send and delete", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
