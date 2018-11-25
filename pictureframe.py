@@ -5,6 +5,7 @@ from subprocess import call
 import os
 import paramiko
 from scp import SCPClient
+import subprocess
 
 LARGE_FONT= ("Verdana", 12)
 
@@ -107,7 +108,7 @@ class PageFour(Frame):
         label = Label(self, text="Switch to HDMI", font=LARGE_FONT, fg="black")
         label.pack()
 
-        button = Button(self, text="Yes", fg="red2")
+        button = Button(self, text="Yes", fg="red2", command=lambda: to_HDMI())
         button.pack(pady=10,padx=10)
         button2 = Button(self, text="No", command=lambda: controller.show_frame(StartPage))
         button2.pack()
@@ -118,9 +119,10 @@ class PageFive(Frame):
         label = Label(self, text="Switch to LCD", font=LARGE_FONT, fg="black")
         label.pack()
 
-        button = Button(self, text="Yes", fg="red2")
+        button = Button(self, text="Yes", fg="red2", command=lambda: to_LCD())
         button.pack(pady=10,padx=10)
-        button2 = Button(self, text="No", command:lambda: controller.show_frame(StartPage))
+        button2 = Button(self, text="No", command=lambda: controller.show_frame(StartPage))
+        button2.pack()
 
 class PageSix(Frame):
     def __init__(self, parent, controller):
@@ -134,7 +136,7 @@ class PageSix(Frame):
         button2.pack()
 
 def ping_it(self,event):
-    #hostname = "ip address (string)"
+    hostname = "IP address(string)"
     response = os.system("ping -c 1 " + hostname)
 
     if response == 0:
@@ -154,15 +156,29 @@ def createSSHClient(server, port, user, password):
 def open_something(textbox):
     app.fileName = tkFileDialog.askopenfilename(title = "Select File to Send", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
     print app.fileName
-    #ssh = createSSHClient("ipaddress(string)", port(int), "username(string)", "password")
+    #ssh = createSSHClient("IP address(string)", port(int), "user(string)", "password of user(string)")
     with SCPClient(ssh.get_transport()) as scp:
-        #scp.put(app.fileName, 'full ending location')
+        #scp.put(app.fileName, 'full path of directory(string)')
      
 
 def send_something(textbox):
     app.fileName = tkFileDialog.askopenfilename(title = "Select file to send and delete", filetypes = (("jpeg files", "*.jpg"),("All files", "*.*")))
     print app.fileName
 
+def to_LCD():
+   os.system("sudo cp ./usr/tft35a-overlay.dtb /boot/overlays/")
+   os.system("sudo cp ./usr/tft35a-overlay.dtb /boot/overlays/tft35a.dtbo")
+   os.system("sudo cp -rf ./usr/99-calibration.conf-35  /etc/X11/xorg.conf.d/99-calibration.conf")
+   os.system("sudo cp -rf ./usr/99-fbturbo.conf  /usr/share/X11/xorg.conf.d/")
+   os.system("sudo cp ./usr/inittab /etc/")
+   os.system("sudo cp ./config-35.txt /boot/config.txt")
+   os.system("reboot")
+
+def to_HDMI():
+    os.system("sudo cp -rf ./usr/modules-HDMI  /etc/modules")
+    os.system("sudo cp -rf ./usr/99-fbturbo.conf-HDMI  /usr/share/X11/xorg.conf.d/99-fbturbo.conf")
+    os.system("sudo cp ./config-normal.txt /boot/config.txt")
+    os.system("sudo reboot")
 
 app = BaconBits()
 app.title("PhotoFrame.Py")
