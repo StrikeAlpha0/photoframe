@@ -136,7 +136,7 @@ class PageSix(Frame):
         button2.pack()
 
 def ping_it(self,event):
-    hostname = "IP address(string)"
+    #hostname = "IP address(string)"
     response = os.system("ping -c 1 " + hostname)
 
     if response == 0:
